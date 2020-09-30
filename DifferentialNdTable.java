@@ -8,7 +8,7 @@ import java.util.TreeMap;
  * Quick and Dirty class I created for creating the Differential Nd table in
  * Differential Cryptanalysis.
  * 
- * @author Ryan Waterer
+ * @author Aguita
  *
  */
 public class DifferentialNdTable {
