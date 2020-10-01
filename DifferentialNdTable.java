@@ -1,5 +1,6 @@
-import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
@@ -12,23 +13,32 @@ import java.util.TreeMap;
  *
  */
 public class DifferentialNdTable {
+	private TreeMap<String, String> sBoxMap;
+	private TreeMap<String, Integer> resultMap;
+
+	public DifferentialNdTable() {
+		sBoxMap = new TreeMap<String, String>();
+		resultMap = new TreeMap<String, Integer>();
+	}
 
 	/**
-	 * X-ORS two strings.
+	 * X-ORS two binary strings
 	 * 
 	 * @param a the first string
 	 * @param b the second string
 	 * @param n the length of the string
 	 * @return the XOR'd value
 	 */
-	public static String xoring(String a, String b, int n) {
+	public String xoring(String a, String b, int n) {
 		String ans = "";
 		for (int i = 0; i < n; i++) {
-			// If the Character matches
-			if (a.charAt(i) == b.charAt(i))
+			// If the Character matches, add a zero because 1+1 = 0 and 0+0 = 0
+			if (a.charAt(i) == b.charAt(i)) {
 				ans += "0";
-			else
+			} else {
+				// If it doesn't match, then the result will always be 1. 0+1 = 1, 1+0 = 1.
 				ans += "1";
+			}
 		}
 		return ans;
 	}
@@ -39,102 +49,20 @@ public class DifferentialNdTable {
 	 * @param mainValue the value to use -- it'll be the binary value of the HEX
 	 *                  characters from 0-F
 	 */
-	public static void parseAndPrintNdBox(String mainValue) {
-
-		// Setting the 0-F variables
-		String zero = "0000";
-		String one = "0001";
-		String two = "0010";
-		String three = "0011";
-		String four = "0100";
-		String five = "0101";
-		String six = "0110";
-		String seven = "0111";
-		String eight = "1000";
-		String nine = "1001";
-		String A = "1010";
-		String B = "1011";
-		String C = "1100";
-		String D = "1101";
-		String E = "1110";
-		String F = "1111";
-
-		TreeMap<String, String> sBoxMap = new TreeMap<String, String>();
-		// Create the sBoxMap of the values. 0-F and give the values for each.
-		// E 2 1 3 D 9 0 6 F 4 5 A 8 C 7 B
-		sBoxMap.put("0000", "1110");
-		sBoxMap.put("0001", "0010");
-		sBoxMap.put("0010", "0001");
-		sBoxMap.put("0011", "0011");
-		sBoxMap.put("0100", "1101");
-		sBoxMap.put("0101", "1001");
-		sBoxMap.put("0110", "0000");
-		sBoxMap.put("0111", "0110");
-		sBoxMap.put("1000", "1111");
-		sBoxMap.put("1001", "0100");
-		sBoxMap.put("1010", "0101");
-		sBoxMap.put("1011", "1010");
-		sBoxMap.put("1100", "1000");
-		sBoxMap.put("1101", "1100");
-		sBoxMap.put("1110", "0111");
-		sBoxMap.put("1111", "1011");
-
-		int n = mainValue.length();
-		String x0 = xoring(mainValue, zero, n);
-		String x1 = xoring(mainValue, one, n);
-		String x2 = xoring(mainValue, two, n);
-		String x3 = xoring(mainValue, three, n);
-		String x4 = xoring(mainValue, four, n);
-		String x5 = xoring(mainValue, five, n);
-		String x6 = xoring(mainValue, six, n);
-		String x7 = xoring(mainValue, seven, n);
-		String x8 = xoring(mainValue, eight, n);
-		String x9 = xoring(mainValue, nine, n);
-		String xa = xoring(mainValue, A, n);
-		String xb = xoring(mainValue, B, n);
-		String xc = xoring(mainValue, C, n);
-		String xd = xoring(mainValue, D, n);
-		String xe = xoring(mainValue, E, n);
-		String xf = xoring(mainValue, F, n);
-
-		TreeMap<String, Integer> resultMap = new TreeMap<String, Integer>();
+	public void parseAndPrintNdBox(String mainValue, List<String> ndList) {
 		initializeMap(resultMap);
-
-		// XOR each of the values of HEX between 0-F
-		String result0 = xoring(sBoxMap.get(zero), sBoxMap.get(x0), n);
-		String result1 = xoring(sBoxMap.get(one), sBoxMap.get(x1), n);
-		String result2 = xoring(sBoxMap.get(two), sBoxMap.get(x2), n);
-		String result3 = xoring(sBoxMap.get(three), sBoxMap.get(x3), n);
-		String result4 = xoring(sBoxMap.get(four), sBoxMap.get(x4), n);
-		String result5 = xoring(sBoxMap.get(five), sBoxMap.get(x5), n);
-		String result6 = xoring(sBoxMap.get(six), sBoxMap.get(x6), n);
-		String result7 = xoring(sBoxMap.get(seven), sBoxMap.get(x7), n);
-		String result8 = xoring(sBoxMap.get(eight), sBoxMap.get(x8), n);
-		String result9 = xoring(sBoxMap.get(nine), sBoxMap.get(x9), n);
-		String resulta = xoring(sBoxMap.get(A), sBoxMap.get(xa), n);
-		String resultb = xoring(sBoxMap.get(B), sBoxMap.get(xb), n);
-		String resultc = xoring(sBoxMap.get(C), sBoxMap.get(xc), n);
-		String resultd = xoring(sBoxMap.get(D), sBoxMap.get(xd), n);
-		String resulte = xoring(sBoxMap.get(E), sBoxMap.get(xe), n);
-		String resultf = xoring(sBoxMap.get(F), sBoxMap.get(xf), n);
-
-		// add the results of each XOR to the result Map, tallying up the results
-		addToMap(resultMap, result0);
-		addToMap(resultMap, result1);
-		addToMap(resultMap, result2);
-		addToMap(resultMap, result3);
-		addToMap(resultMap, result4);
-		addToMap(resultMap, result5);
-		addToMap(resultMap, result6);
-		addToMap(resultMap, result7);
-		addToMap(resultMap, result8);
-		addToMap(resultMap, result9);
-		addToMap(resultMap, resulta);
-		addToMap(resultMap, resultb);
-		addToMap(resultMap, resultc);
-		addToMap(resultMap, resultd);
-		addToMap(resultMap, resulte);
-		addToMap(resultMap, resultf);
+		int n = mainValue.length();
+		for (String ndString : ndList) {
+			// XOR the X and X' to get X*
+			String result = xoring(mainValue, ndString, n);
+			// XOR each of the values of HEX between 0-F
+			// XOR the Y and Y*. Y is gotten by looking up the hex value within the SBox of
+			// X, and Y* is retrieved by looking up the hex value within SBox of X*
+			String result2 = xoring(sBoxMap.get(ndString), sBoxMap.get(result), n);
+			// Add this to the result map, so we can group and tally the results for each
+			// section within 0-F
+			addToMap(resultMap, result2);
+		}
 
 		// Loop through Parse the map for the results and counts
 		Set<Entry<String, Integer>> set = resultMap.entrySet();
@@ -186,41 +114,53 @@ public class DifferentialNdTable {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		DifferentialNdTable ndTable = new DifferentialNdTable();
 		// Creating the Box using values 0-F
+		List<String> ndList = new ArrayList<String>();
 
-		String zero = "0000";
-		String one = "0001";
-		String two = "0010";
-		String three = "0011";
-		String four = "0100";
-		String five = "0101";
-		String six = "0110";
-		String seven = "0111";
-		String eight = "1000";
-		String nine = "1001";
-		String A = "1010";
-		String B = "1011";
-		String C = "1100";
-		String D = "1101";
-		String E = "1110";
-		String F = "1111";
+		ndList.add("0000");
+		ndList.add("0001");
+		ndList.add("0010");
+		ndList.add("0011");
+		ndList.add("0100");
+		ndList.add("0101");
+		ndList.add("0110");
+		ndList.add("0111");
+		ndList.add("1000");
+		ndList.add("1001");
+		ndList.add("1010");
+		ndList.add("1011");
+		ndList.add("1100");
+		ndList.add("1101");
+		ndList.add("1110");
+		ndList.add("1111");
 
-		parseAndPrintNdBox(zero);
-		parseAndPrintNdBox(one);
-		parseAndPrintNdBox(two);
-		parseAndPrintNdBox(three);
-		parseAndPrintNdBox(four);
-		parseAndPrintNdBox(five);
-		parseAndPrintNdBox(six);
-		parseAndPrintNdBox(seven);
-		parseAndPrintNdBox(eight);
-		parseAndPrintNdBox(nine);
-		parseAndPrintNdBox(A);
-		parseAndPrintNdBox(B);
-		parseAndPrintNdBox(C);
-		parseAndPrintNdBox(D);
-		parseAndPrintNdBox(E);
-		parseAndPrintNdBox(F);
+		TreeMap<String, String> sBoxMap = new TreeMap<String, String>();
+		// Create the sBoxMap of the values. 0-F and give the values for each.
+		// E 2 1 3 D 9 0 6 F 4 5 A 8 C 7 B
+		// Default for the 4th Gen of the Stinson book in example 4.1 is
+		// E 4 D 1 2 F B 8 3 A 6 C 5 9 0 7
+		sBoxMap.put("0000", "1110");
+		sBoxMap.put("0001", "0010");
+		sBoxMap.put("0010", "0001");
+		sBoxMap.put("0011", "0011");
+		sBoxMap.put("0100", "1101");
+		sBoxMap.put("0101", "1001");
+		sBoxMap.put("0110", "0000");
+		sBoxMap.put("0111", "0110");
+		sBoxMap.put("1000", "1111");
+		sBoxMap.put("1001", "0100");
+		sBoxMap.put("1010", "0101");
+		sBoxMap.put("1011", "1010");
+		sBoxMap.put("1100", "1000");
+		sBoxMap.put("1101", "1100");
+		sBoxMap.put("1110", "0111");
+		sBoxMap.put("1111", "1011");
+		ndTable.setsBoxMap(sBoxMap);
+
+		for (String ndString : ndList) {
+			ndTable.parseAndPrintNdBox(ndString, ndList);
+		}
 	}
 
 	/**
@@ -233,6 +173,22 @@ public class DifferentialNdTable {
 	public static void addToMap(TreeMap<String, Integer> resultMap, String result) {
 		Integer count = resultMap.get(result);
 		resultMap.put(result, ++count);
+	}
+
+	public TreeMap<String, String> getsBoxMap() {
+		return sBoxMap;
+	}
+
+	public void setsBoxMap(TreeMap<String, String> sBoxMap) {
+		this.sBoxMap = sBoxMap;
+	}
+
+	public TreeMap<String, Integer> getResultMap() {
+		return resultMap;
+	}
+
+	public void setResultMap(TreeMap<String, Integer> resultMap) {
+		this.resultMap = resultMap;
 	}
 
 }
